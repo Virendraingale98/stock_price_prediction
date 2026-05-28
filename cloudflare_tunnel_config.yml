@@ -1,0 +1,20 @@
+# Template Cloudflare Tunnel Configuration File
+# Save this file as 'config.yml' in your .cloudflare folder or project root.
+
+# Replace with your actual Cloudflare Tunnel ID after running 'cloudflared tunnel create stock-predictor'
+tunnel: YOUR_TUNNEL_UUID
+
+# Replace with the path to your credentials JSON file
+credentials-file: C:\Users\YOUR_WINDOWS_USERNAME\.cloudflare\YOUR_TUNNEL_UUID.json
+
+ingress:
+  # 1. Route Streamlit Frontend (Port 8501)
+  - hostname: stock.yourdomain.com
+    service: http://localhost:8501
+    
+  # 2. Route FastAPI Backend API (Port 8000)
+  - hostname: api-stock.yourdomain.com
+    service: http://localhost:8000
+    
+  # 3. Default catch-all (returns 404 for any other path or subdomain)
+  - service: http_status:404
