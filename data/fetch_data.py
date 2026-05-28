@@ -29,6 +29,9 @@ def fetch_yfinance_data(
     if isinstance(df.columns, pd.MultiIndex):
         df.columns = [col[0] for col in df.columns]
         
+    # Rename the first column (which was the index) to 'date'
+    df = df.rename(columns={df.columns[0]: 'date'})
+        
     # Standardize column names (lowercase)
     df.columns = [col.lower() for col in df.columns]
     
