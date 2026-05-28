@@ -1,0 +1,31 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Databases
+stock_system.db
+*.sqlite
+*.db
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Saved models and plots
+models/saved_models/
+models/shap_plots/
+*.pkl
+*.keras
+*.h5
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Operating system files
+Thumbs.db
+.DS_Store
