@@ -389,6 +389,7 @@ elif page == "🔍 Model Analysis":
             prices_res = requests.get(f"{BACKEND_URL}/data/prices/{selected_ticker_symbol}")
             prices_df = pd.DataFrame(prices_res.json())
             prices_df['date'] = pd.to_datetime(prices_df['date'])
+            current_close = float(prices_df.iloc[-1]['close'])
             
             # Time split indices
             split_idx = int(len(prices_df) * 0.8)
