@@ -64,12 +64,8 @@ def engineer_features(df_raw: pd.DataFrame, include_target: bool = True) -> pd.D
         delta = df['close'].diff()
         gain = delta.clip(lower=0)
         loss = -delta.clip(upper=0)
-        avg_gain = gain.rolling(window=14).mean()
-        avg_loss = loss.rolling(window=14).mean()
-        # Smoothed Wilder's method for RSI
-        for i in range(14, len(df)):
-            avg_gain.iloc[i] = (avg_gain.iloc[i-1] * 13 + gain.iloc[i]) / 14
-            avg_loss.iloc[i] = (avg_loss.iloc[i-1] * 13 + loss.iloc[i]) / 14
+        avg_gain = gain.ewm(alpha=1/14, min_periods=14).mean()
+        avg_loss = loss.ewm(alpha=1/14, min_periods=14).mean()
         rs = avg_gain / avg_loss.replace(0, 1e-9)
         df['rsi_14'] = 100 - (100 / (1 + rs))
         
@@ -89,9 +85,7 @@ def engineer_features(df_raw: pd.DataFrame, include_target: bool = True) -> pd.D
         high_close = (df['high'] - df['close'].shift()).abs()
         low_close = (df['low'] - df['close'].shift()).abs()
         tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
-        df['atr_14'] = tr.rolling(window=14).mean()
-        for i in range(14, len(df)):
-            df.loc[i, 'atr_14'] = (df.loc[i-1, 'atr_14'] * 13 + tr.iloc[i]) / 14
+        df['atr_14'] = tr.ewm(alpha=1/14, min_periods=14).mean()
             
         # Trend: OBV
         df['obv'] = (np.sign(df['close'].diff()).fillna(0) * df['volume']).cumsum()
@@ -102,22 +96,18 @@ def engineer_features(df_raw: pd.DataFrame, include_target: bool = True) -> pd.D
         plus_dm = np.where((up_move > down_move) & (up_move > 0), up_move, 0)
         minus_dm = np.where((down_move > up_move) & (down_move > 0), down_move, 0)
         
-        tr_rolling = tr.rolling(window=14).mean()
-        plus_dm_rolling = pd.Series(plus_dm).rolling(window=14).mean()
-        minus_dm_rolling = pd.Series(minus_dm).rolling(window=14).mean()
+        plus_dm_series = pd.Series(plus_dm, index=df.index)
+        minus_dm_series = pd.Series(minus_dm, index=df.index)
         
-        for i in range(14, len(df)):
-            tr_rolling.iloc[i] = (tr_rolling.iloc[i-1] * 13 + tr.iloc[i]) / 14
-            plus_dm_rolling.iloc[i] = (plus_dm_rolling.iloc[i-1] * 13 + plus_dm[i]) / 14
-            minus_dm_rolling.iloc[i] = (minus_dm_rolling.iloc[i-1] * 13 + minus_dm[i]) / 14
-            
-        plus_di = 100 * (plus_dm_rolling / tr_rolling.replace(0, 1e-9))
-        minus_di = 100 * (minus_dm_rolling / tr_rolling.replace(0, 1e-9))
+        tr_smooth = tr.ewm(alpha=1/14, min_periods=14).mean()
+        plus_dm_smooth = plus_dm_series.ewm(alpha=1/14, min_periods=14).mean()
+        minus_dm_smooth = minus_dm_series.ewm(alpha=1/14, min_periods=14).mean()
+        
+        plus_di = 100 * (plus_dm_smooth / tr_smooth.replace(0, 1e-9))
+        minus_di = 100 * (minus_dm_smooth / tr_smooth.replace(0, 1e-9))
         dx = 100 * (plus_di - minus_di).abs() / (plus_di + minus_di).replace(0, 1e-9)
         
-        df['adx_14'] = dx.rolling(window=14).mean()
-        for i in range(28, len(df)):
-            df.loc[i, 'adx_14'] = (df.loc[i-1, 'adx_14'] * 13 + dx.iloc[i]) / 14
+        df['adx_14'] = dx.ewm(alpha=1/14, min_periods=14).mean()
 
     # Lag features
     df['close_lag_1'] = df['close'].shift(1)
