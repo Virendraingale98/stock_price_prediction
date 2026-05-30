@@ -103,7 +103,7 @@ TICKER_MAP = {
     "INFY.NS": "Infosys",
     "ICICIBANK.NS": "ICICI Bank",
     "SBIN.NS": "State Bank of India",
-    "TATAMOTORS.NS": "Tata Motors",
+    "TMPV.NS": "Tata Motors (TMPV)",
     "BHARTIARTL.NS": "Bharti Airtel",
     "ITC.NS": "ITC Ltd.",
     "LT.NS": "Larsen & Toubro"

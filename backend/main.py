@@ -48,7 +48,7 @@ def sync_data(request: schemas.SyncRequest, db: Session = Depends(database.get_d
         # Default target tickers if none provided
         tickers = [
             "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFY.NS", "ICICIBANK.NS",
-            "SBIN.NS", "TATAMOTORS.NS", "BHARTIARTL.NS", "ITC.NS", "LT.NS"
+            "SBIN.NS", "TMPV.NS", "BHARTIARTL.NS", "ITC.NS", "LT.NS"
         ]
         
     total_records = 0
@@ -235,7 +235,7 @@ def get_screener(
     """Runs predictions for all 10 stock tickers simultaneously using the specified model."""
     tickers = [
         "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFY.NS", "ICICIBANK.NS",
-        "SBIN.NS", "TATAMOTORS.NS", "BHARTIARTL.NS", "ITC.NS", "LT.NS"
+        "SBIN.NS", "TMPV.NS", "BHARTIARTL.NS", "ITC.NS", "LT.NS"
     ]
     
     from models.predict import generate_next_day_prediction
